@@ -14,6 +14,9 @@ var testPricing = map[string]Price{
         UnitPrice: 20,
         Special:   map[int]int{2: 30},
     },
+    "C": {
+        UnitPrice: 25,
+    },
 }
 
 func TestInitCheckout(t *testing.T) {
@@ -25,4 +28,46 @@ func TestInitCheckout(t *testing.T) {
         _, err := InitCheckout(nil)
         assert.Error(t, err)
     })
+}
+
+func TestCheckout_Scan(t *testing.T) {
+    t.Run("should scan inputs and add them to checkout object items list", func(t *testing.T) {
+        co := Checkout{}
+        co.Scan("A")
+        co.Scan("B")
+        co.Scan("A")
+        co.Scan("C")
+        assert.ElementsMatch(t, []string{"A", "B", "A", "C"}, co.Items)
+    })
+}
+
+func TestCheckout_GetTotalPricing(t *testing.T) {
+    cases := []struct {
+        items    []string
+        expected int
+    }{
+        {
+            items:    []string{"A"},
+            expected: 10,
+        },
+        {
+            items:    []string{"A", "A", "A", "B"},
+            expected: 45,
+        },
+        {
+            items:    []string{"A", "B", "C", "A", "B"},
+            expected: 75,
+        },
+    }
+
+    for _, tc := range cases {
+        t.Run("should calculate total pricing correctly", func(t *testing.T) {
+            co := Checkout{
+                Items:  tc.items,
+                Prices: testPricing,
+            }
+            assert.Equal(t, tc.expected, co.GetTotalPricing())
+        })
+    }
+
 }
