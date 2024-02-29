@@ -5,14 +5,16 @@ import (
     "testing"
 )
 
-var testPricing = map[string]Price{
+var testPricing = map[string]*Price{
     "A": {
-        UnitPrice: 10,
-        Special:   map[int]int{3: 25},
+        UnitPrice:    10,
+        SpecialPrice: 25,
+        SpecialCount: 3,
     },
     "B": {
-        UnitPrice: 20,
-        Special:   map[int]int{2: 30},
+        UnitPrice:    20,
+        SpecialPrice: 30,
+        SpecialCount: 2,
     },
     "C": {
         UnitPrice: 25,
@@ -53,6 +55,10 @@ func TestCheckout_GetTotalPricing(t *testing.T) {
         {
             items:    []string{"A", "A", "A", "B"},
             expected: 45,
+        },
+        {
+            items:    []string{"A", "A", "A", "A", "B"},
+            expected: 55,
         },
         {
             items:    []string{"A", "B", "C", "A", "B"},
