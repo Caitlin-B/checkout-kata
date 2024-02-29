@@ -7,6 +7,7 @@ import (
     "strings"
 )
 
+// ScanPrices scans prices from a csv formats them into a map of SKU > Price
 func ScanPrices(path string) (map[string]*Price, error) {
     file, err := os.Open(path)
     if err != nil {
